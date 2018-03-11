@@ -4,6 +4,7 @@
 
 class numberWidget : public movingWidget
 {
+    Q_OBJECT
 public:
     numberWidget(QWidget* parent);
 

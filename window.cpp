@@ -13,13 +13,12 @@ window::window(QWidget *parent) :
     numbers.resize(10);
     //create numberWidgets and draw them
     for (auto& v : numbers)
-    {
         v=new numberWidget(this);
-        v->show();
-    }
     draw_numbers();
 
     create_interactive_buttons();
+
+    create_pointerWidgets();
 
     QObject::connect(ui->speedBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onSpeedChanged()));
     QObject::connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(onNumbersNumberChanged()));
@@ -48,6 +47,16 @@ void window::create_interactive_buttons()
     connect(playButton, SIGNAL(clicked(bool)), this, SLOT(onPlayClicked()));
     connect(pauseButton, SIGNAL(clicked(bool)), this, SLOT(onPauseClicked()));
     connect(reloadButton, SIGNAL(clicked(bool)), this, SLOT(onReloadClicked()));
+}
+
+void window::create_pointerWidgets()
+{
+    iPtr=new pointerWidget(this, "i");
+    jPtr=new pointerWidget(this, "j");
+    iPtr->setGeometry(100, 100, numbers[0]->width(), 60);
+    jPtr->setGeometry(100, 200, numbers[0]->width(), 60);
+    iPtr->setVisible(false);
+    jPtr->setVisible(false);
 }
 
 void window::draw_numbers()

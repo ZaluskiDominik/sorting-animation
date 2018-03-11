@@ -28,13 +28,15 @@ SOURCES += \
         window.cpp \
     interactivebutton.cpp \
     movingwidget.cpp \
-    numberwidget.cpp
+    numberwidget.cpp \
+    pointerwidget.cpp
 
 HEADERS += \
         window.h \
     interactivebutton.h \
     movingwidget.h \
-    numberwidget.h
+    numberwidget.h \
+    pointerwidget.h
 
 FORMS += \
         window.ui

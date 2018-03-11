@@ -1,0 +1,32 @@
+#include "pointerwidget.h"
+#include <QPainter>
+
+pointerWidget::pointerWidget(QWidget *parent, QString ptrChar)
+    :movingWidget(parent)
+{
+    character=ptrChar;
+    QObject::connect(this, SIGNAL(changePosRequest(int, int)), this, SLOT(onChangePosRequest(int, int)), Qt::DirectConnection);
+}
+
+void pointerWidget::change_pos(int x, int y)
+{
+    emit changePosRequest(x, y);
+}
+
+void pointerWidget::onChangePosRequest(int x, int y)
+{
+    setGeometry(x, y, width(), height());
+}
+
+void pointerWidget::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+
+    QFont f;
+    f.setPointSize(36);
+    f.setBold(true);
+    p.setFont(f);
+    p.setPen(QColor(64, 224, 208));
+
+    p.drawText(0, 0, width(), height(), Qt::AlignCenter, character);
+}

@@ -5,6 +5,7 @@
 #include <vector>
 #include "interactivebutton.h"
 #include "numberwidget.h"
+#include "pointerwidget.h"
 
 namespace Ui {
 class window;
@@ -26,10 +27,15 @@ private:
     //play, pause and reload buttons at the bottom of the window
     interactiveButton *playButton, *pauseButton, *reloadButton;
 
+    pointerWidget *iPtr, *jPtr;
+
     std::vector<numberWidget*> numbers;
 
     void create_interactive_buttons();
     //draw number to the middle of the window
+
+    //create 'i' and 'j' pointerWidgets
+    void create_pointerWidgets();
 
     void draw_numbers();
 
@@ -44,7 +50,6 @@ private:
     void quick_sort(int l, int r);
 
     void bubble_sort();
-
 
 private slots:
     //interactive buttons' slots
