@@ -5,7 +5,7 @@ pointerWidget::pointerWidget(QWidget *parent, QString ptrChar)
     :movingWidget(parent)
 {
     character=ptrChar;
-    QObject::connect(this, SIGNAL(changePosRequest(int, int)), this, SLOT(onChangePosRequest(int, int)), Qt::DirectConnection);
+    QObject::connect(this, SIGNAL(changePosRequest(int, int)), this, SLOT(onChangePosRequest(int, int)));
 }
 
 void pointerWidget::change_pos(int x, int y)
@@ -23,10 +23,12 @@ void pointerWidget::paintEvent(QPaintEvent *)
     QPainter p(this);
 
     QFont f;
-    f.setPointSize(36);
+    f.setPointSize(30);
     f.setBold(true);
     p.setFont(f);
     p.setPen(QColor(64, 224, 208));
+
+    p.fillRect(0, 0, width(), height(), Qt::red);
 
     p.drawText(0, 0, width(), height(), Qt::AlignCenter, character);
 }

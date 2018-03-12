@@ -9,11 +9,12 @@ class pointerWidget : public movingWidget
 public:
     pointerWidget(QWidget* parent, QString ptrChar);
 
-    inline void change_pos(int x, int y);
+    void change_pos(int x, int y);
 
 protected:
     void paintEvent(QPaintEvent*);
 
+private:
     QString character;
 
 private slots:

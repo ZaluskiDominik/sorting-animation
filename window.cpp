@@ -10,7 +10,7 @@ window::window(QWidget *parent) :
 
     state=sortState::NotMoving;
 
-    numbers.resize(10);
+    numbers.resize(ui->spinBox->value());
     //create numberWidgets and draw them
     for (auto& v : numbers)
         v=new numberWidget(this);
@@ -53,17 +53,34 @@ void window::create_pointerWidgets()
 {
     iPtr=new pointerWidget(this, "i");
     jPtr=new pointerWidget(this, "j");
-    iPtr->setGeometry(100, 100, numbers[0]->width(), 60);
-    jPtr->setGeometry(100, 200, numbers[0]->width(), 60);
-    iPtr->setVisible(false);
-    jPtr->setVisible(false);
+    iPtr->setGeometry(100, 100, numbers[0]->width(), numbers[0]->height());
+    jPtr->setGeometry(100, 200, numbers[0]->width(), numbers[0]->height());
+    set_pointers_visible(false);
+}
+
+void window::set_pointers_visible(bool yesNo)
+{
+    iPtr->setVisible(yesNo);
+    jPtr->setVisible(yesNo);
+}
+
+void window::change_pointers_pos(int x1, int x2)
+{
+    iPtr->change_pos(numbers[x1]->x(), numbers[x1]->y() + (1.2 * numbers[x1]->height()));
+    jPtr->change_pos(numbers[x2]->x(), numbers[x2]->y() - (1.2 * numbers[x2]->height()));
+}
+
+void window::move_pointer_widget(pointerWidget *p, int x)
+{
+    p->move(std::list<QPoint>( {QPoint(x, p->y())} ));
+    while(p->getState()!=sortState::NotMoving);
 }
 
 void window::draw_numbers()
 {
-    const int w=60, h=90, space=20;
+    const int w=80, h=90, space=20;
     for (unsigned int i=0 ; i<numbers.size() ; i++)
-        numbers[i]->setGeometry(width()/2 - ((w + space) * (numbers.size()/2)) + ((w + space)*i), height()/2 - (h/2), w, h);
+        numbers[i]->setGeometry(width()/2 -  (( (space + w) * numbers.size() - space )/2) + ((w + space)*i), height()/2 - (h/2), w, h);
 }
 
 void window::start_animation()
@@ -118,6 +135,9 @@ void window::wait_for_stoppedState()
 
 void window::quick_sort(int l, int r)
 {
+    //set pointerWidgets on each end of sorted part of an array
+    change_pointers_pos(l, r);
+
     if (l>=r || state==sortState::NotMoving)
         return;
 
@@ -129,10 +149,12 @@ void window::quick_sort(int l, int r)
         while (numbers[++i]->getNumber() < piv)
         {
             //move i pointer
+            //move_pointer_widget(iPtr, i);
         }
         while (numbers[--j]->getNumber() > piv)
         {
             //move j pointer
+            //move_pointer_widget(jPtr, j);
         }
 
         if (i<j)
@@ -170,6 +192,7 @@ void window::onPlayClicked()
 {
     if (state==sortState::NotMoving)
     {
+        set_pointers_visible(true);
         //disable an option for changing the number of numberWidgets
         ui->spinBox->setDisabled(true);
         ui->groupBox->setDisabled(true);

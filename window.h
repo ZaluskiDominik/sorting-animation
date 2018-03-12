@@ -37,6 +37,12 @@ private:
     //create 'i' and 'j' pointerWidgets
     void create_pointerWidgets();
 
+    void set_pointers_visible(bool yesNo);
+
+    void change_pointers_pos(int x1, int x2);
+
+    void move_pointer_widget(pointerWidget* p, int x);
+
     void draw_numbers();
 
     //start sorting numbers

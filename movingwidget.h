@@ -6,6 +6,7 @@
 
 extern std::mutex mutex;
 
+//moving widget can be in 3 states
 enum class sortState{InProgress, Paused, NotMoving};
 
 class movingWidget : public QWidget
@@ -15,25 +16,26 @@ public:
     explicit movingWidget(QWidget *parent);
 
     //set speed of the moving animation(x1.5, x2.0 and so on)
-    static void setSpeed(double speed)
+    static void set_speed(double speed)
     {
         mutex.lock();
         moveTime=initMoveTime / speed;
         mutex.unlock();
     }
 
-    //end or pause moving
-    void setState(sortState s)
+    //stop, pause, reset moving
+    void set_state(sortState s)
     {
         mutex.lock();
         if (s==sortState::NotMoving && timeoutContinue==true)
-            timeoutContinue=false;
+            timeoutContinue=false;  //set flag that thread should be ended, but don't change state yet
         else
             state=s;
         mutex.unlock();
     }
 
-    sortState getState()
+    //return current state of widget
+    sortState get_state()
     {
         mutex.lock();
         sortState res=state;
@@ -41,7 +43,7 @@ public:
         return res;
     }
 
-    //begin moving to given points
+    //begin moving to the given points
     void move(std::list<QPoint> _path);
 
 private:
@@ -50,19 +52,19 @@ private:
     //current time between widget's moves after applying sedSpeed() method
     static int moveTime;
 
-    //distance the widget moves on each move
+    //distance which the widget moves on each move
     static const int moveDistance;
 
     //whether moveTimeout() signal is continuing to be fired off
     bool timeoutContinue;
 
-    //whether widget is moving or paused
+    //current state of widget
     sortState state;
 
     //list of points that makes widget's path
     std::list<QPoint> path;
 
-    //function in another thread that fire off moveTimeout() signals
+    //thread function that fire off moveTimeout() signals
     void move_thread();
 
     bool isTimeoutContinuing()

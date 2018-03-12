@@ -38,7 +38,7 @@ void movingWidget::move_thread()
         //make a new move
         emit moveTimeout();
 
-        //count time until fireing off a new signal
+        //count time until firing off a new signal
         t1=clock();
         while (double(clock()-t1)/double(CLOCKS_PER_SEC)*1000.0<moveTime || getState()==sortState::Paused)
         {
@@ -48,7 +48,7 @@ void movingWidget::move_thread()
         }
     }
     //set flag that animation has ended
-    setState(sortState::NotMoving);
+    set_state(sortState::NotMoving);
 }
 
 void movingWidget::onMoveTimeout()
