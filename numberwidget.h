@@ -8,19 +8,29 @@ class numberWidget : public movingWidget
 public:
     numberWidget(QWidget* parent);
 
-    int getNumber()
+    //return the number which is shown on the widget
+    int get_number() const
     {
         return number;
     }
 
     //set color of the number's rectangle
-    void setColor(QColor color)
+    void set_color(QColor color)
     {
         rectColor=color;
         update();
     }
 
-    int getNr()
+    //return current color of widget's rectangle
+    QColor get_color() const
+    {
+        mutex.lock();
+        QColor c=rectColor;
+        mutex.unlock();
+        return c;
+    }
+
+    int get_nr() const
     {
         return nr;
     }
@@ -29,9 +39,11 @@ private:
     int number;
     QColor rectColor;
 
+    //counter of created numberWidgets since start of application
     static int createdNumbers;
 
     //number indicating when widget was created
+    //it's used for reseting order of nubers before sorting
     int nr;
 
 protected:

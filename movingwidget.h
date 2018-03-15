@@ -35,7 +35,7 @@ public:
     }
 
     //return current state of widget
-    sortState get_state()
+    sortState get_state() const
     {
         mutex.lock();
         sortState res=state;

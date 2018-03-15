@@ -27,35 +27,73 @@ private:
     //play, pause and reload buttons at the bottom of the window
     interactiveButton *playButton, *pauseButton, *reloadButton;
 
+    //pointers on currently swapped numbers
     pointerWidget *iPtr, *jPtr;
 
     std::vector<numberWidget*> numbers;
 
+    //FUNCTIONS
+
     void create_interactive_buttons();
     //draw number to the middle of the window
+
+    //draw numberWidgets in the middle of the window
+    void draw_numbers();
+
+    //************************************************
+    //Pointers widget
 
     //create 'i' and 'j' pointerWidgets
     void create_pointerWidgets();
 
     void set_pointers_visible(bool yesNo);
 
+    //change position of pointers 'i' and 'j' based on numbers vector's index
     void change_pointers_pos(int x1, int x2);
 
+    //animated move
     void move_pointer_widget(pointerWidget* p, int x);
 
-    void draw_numbers();
+    void set_ptr_state_if(sortState state, sortState thisState);
+
+    //*************************************************
 
     //start sorting numbers
     void start_animation();
 
     void swap_animation(numberWidget& a, numberWidget& b);
 
+    //wait until numberWidgets's thread end
     void wait_for_stoppedState();
 
+    void enable_UI(bool yesNo);
+
+    void mswait(int time);
+
+    void set_state(sortState s)
+    {
+        mutex.lock();
+        state=s;
+        mutex.unlock();
+    }
+
+    sortState get_state()
+    {
+        mutex.lock();
+        sortState s=state;
+        mutex.unlock();
+        return s;
+    }
+
+    //**************************************************
     //methods of sorting
     void quick_sort(int l, int r);
 
     void bubble_sort();
+
+    void selection_sort();
+
+    //**************************************************
 
 private slots:
     //interactive buttons' slots
@@ -69,10 +107,14 @@ private slots:
     //spin box slot
     void onNumbersNumberChanged();
 
-    void onEnableUI();
+    //enable using ui elements after the end of sorting
+    void onSortThreadEnded();
+
+    //slot called before ending the app
+    void onQuit();
 
 signals:
-    void enableUI();
+    void sortThreadEnded();
 
 };
 

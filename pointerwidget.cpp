@@ -26,9 +26,9 @@ void pointerWidget::paintEvent(QPaintEvent *)
     f.setPointSize(30);
     f.setBold(true);
     p.setFont(f);
-    p.setPen(QColor(64, 224, 208));
 
-    p.fillRect(0, 0, width(), height(), Qt::red);
+    //turquise color of the text
+    p.setPen(QColor(64, 224, 208));
 
     p.drawText(0, 0, width(), height(), Qt::AlignCenter, character);
 }

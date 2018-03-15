@@ -23,8 +23,10 @@ void numberWidget::paintEvent(QPaintEvent *)
     f.setBold(true);
     p.setFont(f);
 
+    //yellow number
     p.setPen(Qt::yellow);
 
+    //blue background
     p.fillRect(0, 0, width(), height(), rectColor);
     p.drawText(0, 0, width(), height(), Qt::AlignCenter, QString::number(number));
 }

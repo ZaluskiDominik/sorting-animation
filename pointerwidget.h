@@ -9,15 +9,18 @@ class pointerWidget : public movingWidget
 public:
     pointerWidget(QWidget* parent, QString ptrChar);
 
+    //immediately change widget's position
     void change_pos(int x, int y);
 
 protected:
     void paintEvent(QPaintEvent*);
 
 private:
+    //displayed name of the pointerWidget
     QString character;
 
 private slots:
+    //signal fired off when change_pos() is called
     void onChangePosRequest(int x, int y);
 
 signals:

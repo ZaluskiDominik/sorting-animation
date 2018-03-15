@@ -21,7 +21,7 @@ void movingWidget::move(std::list<QPoint> _path)
     //set widget's moving path
     path=_path;
     timeoutContinue=true;
-    setState(sortState::InProgress);
+    set_state(sortState::InProgress);
 
     //start move_thread() function in a new thread
     std::thread thr(move_thread, this);
@@ -40,7 +40,7 @@ void movingWidget::move_thread()
 
         //count time until firing off a new signal
         t1=clock();
-        while (double(clock()-t1)/double(CLOCKS_PER_SEC)*1000.0<moveTime || getState()==sortState::Paused)
+        while (double(clock()-t1)/double(CLOCKS_PER_SEC)*1000.0<moveTime || get_state()==sortState::Paused)
         {
             //if user wanted to stop sorting then end the thread
             if (!isTimeoutContinuing())
