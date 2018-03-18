@@ -14,7 +14,10 @@ window::window(QWidget *parent) :
     numbers.resize(ui->spinBox->value());
     //create numberWidgets and draw them
     for (auto& v : numbers)
+    {
         v=new numberWidget(this);
+        QObject::connect(v, SIGNAL(numberDeleted()), this, SLOT(onNumberDeleted()));
+    }
     draw_numbers();
 
     create_interactive_buttons();
@@ -82,6 +85,7 @@ void window::change_pointers_pos(int x1, int x2)
 {
     iPtr->change_pos(numbers[x1]->x(), numbers[x1]->y() + (1.2 * numbers[x1]->height()));
     jPtr->change_pos(numbers[x2]->x(), numbers[x2]->y() - (1.2 * numbers[x2]->height()));
+    while (iPtr->position_changed()==false || jPtr->position_changed()==false);
 }
 
 void window::move_pointer_widget(pointerWidget *p, int x)
@@ -151,7 +155,7 @@ void window::wait_for_stoppedState()
     {
         for (i=0 ; i<numbers.size() && numbers[i]->get_state()==sortState::NotMoving; i++);
         //if all widgets are not moving then break the loop
-        if (i==numbers.size() && iPtr->get_state()==sortState::NotMoving && jPtr->get_state()==sortState::NotMoving)
+        if (i==numbers.size() && iPtr->get_state()==sortState::NotMoving && jPtr->get_state()==sortState::NotMoving && iPtr->position_changed() && jPtr->position_changed())
             break;
     }
 }
@@ -188,6 +192,8 @@ void window::quick_sort(int l, int r)
     //choose the middle number as a pivot
     numberWidget& piv=*numbers[(l+r)/2];
     numbers[(l+r)/2]->set_color(Qt::red);
+    mswait(500);
+
     int i=l-1, j=r+1;
     while (i<j && get_state()!=sortState::NotMoving)
     {
@@ -241,16 +247,30 @@ void window::selection_sort()
 {
     int i, j, max;
     change_pointers_pos(0, numbers.size()-1);
-    for (j=numbers.size()-1 ; j ; j--)
+    for (j=numbers.size()-1 ; j && get_state()!=sortState::NotMoving ; j--)
     {
         max=0;
+        numbers[0]->set_color(Qt::red);
+
         for (i=1 ; i<=j ; i++)
         {
-            move_pointer_widget(iPtr, j);
+            move_pointer_widget(iPtr, i);
             if (numbers[i]->get_number() > numbers[max]->get_number())
+            {
+                numbers[max]->set_color(Qt::blue);
                 max=i;
+                numbers[i]->set_color(Qt::red);
+            }
+            mswait(500);
         }
-        std::swap(numbers[max], numbers[j]);
+
+        numbers[max]->set_color(Qt::blue);
+        if (max!=j)
+        {
+            swap_animation(*numbers[max], *numbers[j]);
+            if (get_state()!=sortState::NotMoving)
+                std::swap(numbers[max], numbers[j]);
+        }
 
         change_pointers_pos(0, j);
         move_pointer_widget(jPtr, j-1);
@@ -321,16 +341,17 @@ void window::onSpeedChanged()
 
 void window::onNumbersNumberChanged()
 {
-    if (ui->spinBox->value()>numbers.size())
+    if (ui->spinBox->value() > numbers.size())
     {
         //add new number/numbers
         for (int i=numbers.size() ; i<ui->spinBox->value() ; i++)
         {
             numbers.push_back(new numberWidget(this));
             numbers.back()->show();
+            QObject::connect(numbers.back(), SIGNAL(numberDeleted()), this, SLOT(onNumberDeleted()));
         }
     }
-    else
+    else if (ui->spinBox->value() < numbers.size())
     {
         //remove number/numbers
         for (int i=numbers.size() ; i>ui->spinBox->value() ; i--)
@@ -346,6 +367,24 @@ void window::onSortThreadEnded()
 {
     enable_UI(true);
     set_pointers_visible(false);
+}
+
+void window::onNumberDeleted()
+{
+    if (get_state()==sortState::NotMoving && numbers.size() > ui->spinBox->minimum())
+    {
+        auto num=qobject_cast<numberWidget*>(sender());
+        int i;
+
+        for (i=0 ; numbers[i]!=num ; i++);
+        for ( ; i<numbers.size()-1 ; i++)
+            numbers[i]=numbers[i+1];
+
+        num->deleteLater();
+        numbers.pop_back();
+        ui->spinBox->setValue(numbers.size());
+        //spinBox's signal will redraw numbers
+    }
 }
 
 void window::onQuit()

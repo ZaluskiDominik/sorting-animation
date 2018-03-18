@@ -1,6 +1,7 @@
 #ifndef NUMBERWIDGET_H
 #define NUMBERWIDGET_H
 #include "movingwidget.h"
+#include <QAction>
 
 class numberWidget : public movingWidget
 {
@@ -39,6 +40,9 @@ private:
     int number;
     QColor rectColor;
 
+    QAction* deleteAction;
+    QAction* editAction;
+
     //counter of created numberWidgets since start of application
     static int createdNumbers;
 
@@ -48,6 +52,16 @@ private:
 
 protected:
     void paintEvent(QPaintEvent*);
+
+    //context menu on mouse right click
+    void contextMenuEvent(QContextMenuEvent* e);
+
+private slots:
+    void onDeleteNumber();
+    void onEditNumber();
+
+signals:
+    void numberDeleted();
 
 };
 

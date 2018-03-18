@@ -5,17 +5,24 @@ pointerWidget::pointerWidget(QWidget *parent, QString ptrChar)
     :movingWidget(parent)
 {
     character=ptrChar;
+    positionChanged=true;
     QObject::connect(this, SIGNAL(changePosRequest(int, int)), this, SLOT(onChangePosRequest(int, int)));
 }
 
 void pointerWidget::change_pos(int x, int y)
 {
+    mutex.lock();
+    positionChanged=false;
+    mutex.unlock();
     emit changePosRequest(x, y);
 }
 
 void pointerWidget::onChangePosRequest(int x, int y)
 {
     setGeometry(x, y, width(), height());
+    mutex.lock();
+    positionChanged=true;
+    mutex.unlock();
 }
 
 void pointerWidget::paintEvent(QPaintEvent *)

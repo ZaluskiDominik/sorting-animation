@@ -27,7 +27,7 @@ private:
     //play, pause and reload buttons at the bottom of the window
     interactiveButton *playButton, *pauseButton, *reloadButton;
 
-    //pointers on currently swapped numbers
+    //visible pointers representing iteration variable
     pointerWidget *iPtr, *jPtr;
 
     std::vector<numberWidget*> numbers;
@@ -109,6 +109,8 @@ private slots:
 
     //enable using ui elements after the end of sorting
     void onSortThreadEnded();
+
+    void onNumberDeleted();
 
     //slot called before ending the app
     void onQuit();
