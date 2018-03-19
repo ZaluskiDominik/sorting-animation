@@ -2,6 +2,24 @@
 #include "ui_window.h"
 #include <thread>
 
+//state of sorting
+sortState state;
+
+void set_state(sortState s)
+{
+    mutex.lock();
+    state=s;
+    mutex.unlock();
+}
+
+sortState get_state()
+{
+    mutex.lock();
+    sortState s=state;
+    mutex.unlock();
+    return s;
+}
+
 window::window(QWidget *parent) :
     QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint),
     ui(new Ui::window)
@@ -16,7 +34,7 @@ window::window(QWidget *parent) :
     for (auto& v : numbers)
     {
         v=new numberWidget(this);
-        QObject::connect(v, SIGNAL(numberDeleted()), this, SLOT(onNumberDeleted()));
+        QObject::connect(v, SIGNAL(numberDeleteClicked()), this, SLOT(onNumberDeleteClicked()));
     }
     draw_numbers();
 
@@ -348,7 +366,7 @@ void window::onNumbersNumberChanged()
         {
             numbers.push_back(new numberWidget(this));
             numbers.back()->show();
-            QObject::connect(numbers.back(), SIGNAL(numberDeleted()), this, SLOT(onNumberDeleted()));
+            QObject::connect(numbers.back(), SIGNAL(numberDeleteClicked()), this, SLOT(onNumberDeleted()));
         }
     }
     else if (ui->spinBox->value() < numbers.size())
@@ -369,9 +387,9 @@ void window::onSortThreadEnded()
     set_pointers_visible(false);
 }
 
-void window::onNumberDeleted()
+void window::onNumberDeleteClicked()
 {
-    if (get_state()==sortState::NotMoving && numbers.size() > ui->spinBox->minimum())
+    if (numbers.size() > ui->spinBox->minimum())
     {
         auto num=qobject_cast<numberWidget*>(sender());
         int i;

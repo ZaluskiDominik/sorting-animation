@@ -57,11 +57,12 @@ protected:
     void contextMenuEvent(QContextMenuEvent* e);
 
 private slots:
-    void onDeleteNumber();
-    void onEditNumber();
+    void onDeleteNumberClicked();
+    void onEditNumberClicked();
+    void onNumberEdited(int newNumber);
 
 signals:
-    void numberDeleted();
+    void numberDeleteClicked();
 
 };
 

@@ -22,8 +22,6 @@ public:
 private:
     Ui::window *ui;
 
-    sortState state;
-
     //play, pause and reload buttons at the bottom of the window
     interactiveButton *playButton, *pauseButton, *reloadButton;
 
@@ -70,21 +68,6 @@ private:
 
     void mswait(int time);
 
-    void set_state(sortState s)
-    {
-        mutex.lock();
-        state=s;
-        mutex.unlock();
-    }
-
-    sortState get_state()
-    {
-        mutex.lock();
-        sortState s=state;
-        mutex.unlock();
-        return s;
-    }
-
     //**************************************************
     //methods of sorting
     void quick_sort(int l, int r);
@@ -110,7 +93,8 @@ private slots:
     //enable using ui elements after the end of sorting
     void onSortThreadEnded();
 
-    void onNumberDeleted();
+    //delete was clicked in context menu
+    void onNumberDeleteClicked();
 
     //slot called before ending the app
     void onQuit();

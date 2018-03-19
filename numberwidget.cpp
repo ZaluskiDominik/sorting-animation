@@ -3,6 +3,9 @@
 #include <QMouseEvent>
 #include <QContextMenuEvent>
 #include <QMenu>
+#include "changenumberdialog.h"
+
+extern sortState get_state();
 
 int numberWidget::createdNumbers=0;
 
@@ -21,8 +24,8 @@ numberWidget::numberWidget(QWidget *parent)
 
     nr=createdNumbers++;
 
-    QObject::connect(deleteAction, &QAction::triggered, this, &onDeleteNumber);
-    QObject::connect(editAction, &QAction::triggered, this, &onEditNumber);
+    QObject::connect(deleteAction, &QAction::triggered, this, &onDeleteNumberClicked);
+    QObject::connect(editAction, &QAction::triggered, this, &onEditNumberClicked);
 }
 
 void numberWidget::paintEvent(QPaintEvent *)
@@ -45,7 +48,7 @@ void numberWidget::paintEvent(QPaintEvent *)
 
 void numberWidget::contextMenuEvent(QContextMenuEvent *e)
 {
-    if (e->reason()==QContextMenuEvent::Mouse)
+    if (e->reason()==QContextMenuEvent::Mouse && ::get_state()==sortState::NotMoving)
     {
         //create menu
         QMenu menu(this);
@@ -56,13 +59,21 @@ void numberWidget::contextMenuEvent(QContextMenuEvent *e)
     }
 }
 
-void numberWidget::onDeleteNumber()
+void numberWidget::onDeleteNumberClicked()
 {
-    emit numberDeleted();
+    emit numberDeleteClicked();
 }
 
-void numberWidget::onEditNumber()
+void numberWidget::onEditNumberClicked()
 {
-
+    changeNumberDialog* dial=new changeNumberDialog(this);
+    dial->set_number(number);
+    dial->show();
+    QObject::connect(dial, SIGNAL(numberEdited(int)), this, SLOT(onNumberEdited(int)));
 }
 
+void numberWidget::onNumberEdited(int newNumber)
+{
+    number=newNumber;
+    update();
+}

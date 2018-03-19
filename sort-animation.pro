@@ -29,17 +29,20 @@ SOURCES += \
     interactivebutton.cpp \
     movingwidget.cpp \
     numberwidget.cpp \
-    pointerwidget.cpp
+    pointerwidget.cpp \
+    changenumberdialog.cpp
 
 HEADERS += \
         window.h \
     interactivebutton.h \
     movingwidget.h \
     numberwidget.h \
-    pointerwidget.h
+    pointerwidget.h \
+    changenumberdialog.h
 
 FORMS += \
-        window.ui
+        window.ui \
+    changenumberdialog.ui
 
 RESOURCES += \
     resources.qrc
